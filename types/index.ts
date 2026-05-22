@@ -26,7 +26,7 @@ export interface ToolSubscription {
   tool: AITool;
   plan: ToolPlan;
   monthlySpend: number;
-  seats: number;
+  // seats removed - simplified
 }
 
 export interface UserInput {

@@ -9,7 +9,6 @@ describe('Audit Engine', () => {
         tool: 'claude',
         plan: 'team',
         monthlySpend: 25,
-        seats: 1
       }],
       teamSize: 1,
       primaryUseCase: 'coding'
@@ -26,7 +25,6 @@ describe('Audit Engine', () => {
         tool: 'cursor',
         plan: 'pro',
         monthlySpend: 40,
-        seats: 2
       }],
       teamSize: 2,
       primaryUseCase: 'coding'
@@ -67,7 +65,6 @@ describe('Audit Engine', () => {
         tool: 'github-copilot',
         plan: 'individual',
         monthlySpend: 10,
-        seats: 1
       }],
       teamSize: 1,
       primaryUseCase: 'coding'
