@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, RefreshCw } from 'lucide-react';
 import { UserInput, ToolSubscription, AITool, ToolPlan } from '@/types';
 
 const TOOLS: { value: AITool; label: string }[] = [
@@ -19,6 +19,28 @@ const TOOLS: { value: AITool; label: string }[] = [
   { value: 'openai-api', label: 'OpenAI API' },
   { value: 'windsurf', label: 'Windsurf' },
 ];
+
+// Complete pricing data for all plans
+const PLAN_PRICES: Record<string, number> = {
+  'cursor-hobby': 0,
+  'cursor-pro': 20,
+  'cursor-business': 40,
+  'github-copilot-individual': 10,
+  'github-copilot-business': 19,
+  'github-copilot-enterprise': 39,
+  'claude-free': 0,
+  'claude-pro': 20,
+  'claude-max': 30,
+  'claude-team': 25,
+  'chatgpt-plus': 20,
+  'chatgpt-team': 25,
+  'gemini-pro': 20,
+  'gemini-ultra': 30,
+  'windsurf-pro': 15,
+  'windsurf-team': 30,
+  'anthropic-api-paygo': 0,
+  'openai-api-paygo': 0,
+};
 
 const PLANS: Record<AITool, { value: ToolPlan; label: string }[]> = {
   cursor: [
@@ -57,7 +79,12 @@ const PLANS: Record<AITool, { value: ToolPlan; label: string }[]> = {
   ],
 };
 
-// Default empty subscription (simplified - no seats)
+// Helper function to get plan price
+const getPlanPrice = (tool: AITool, plan: ToolPlan): number => {
+  return PLAN_PRICES[`${tool}-${plan}`] || 0;
+};
+
+// Default subscription
 const getDefaultSubscription = (): ToolSubscription => ({
   tool: 'cursor',
   plan: 'pro',
@@ -77,7 +104,6 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
 
   // Load saved data from localStorage OR initialData prop
   useEffect(() => {
-    // First priority: initialData from parent (when clicking back from results)
     if (initialData) {
       setSubscriptions(initialData.subscriptions);
       setTeamSize(initialData.teamSize);
@@ -86,7 +112,6 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
       return;
     }
 
-    // Second priority: localStorage
     const saved = localStorage.getItem('ai-audit-form');
     if (saved) {
       try {
@@ -103,7 +128,7 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
     setIsLoaded(true);
   }, [initialData]);
 
-  // Save to localStorage whenever data changes (only after initial load)
+  // Save to localStorage whenever data changes
   useEffect(() => {
     if (!isLoaded) return;
     
@@ -119,18 +144,55 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
   };
 
   const removeSubscription = (index: number) => {
-    if (subscriptions.length === 1) return; // Don't remove last item
+    if (subscriptions.length === 1) return;
     setSubscriptions(subscriptions.filter((_, i) => i !== index));
   };
 
+  // Auto-calculate monthly spend when tool or plan changes
   const updateSubscription = (index: number, field: keyof ToolSubscription, value: any) => {
     const updated = [...subscriptions];
     updated[index] = { ...updated[index], [field]: value };
+    
+    // If tool or plan changed, auto-calculate the monthly spend
+    if (field === 'tool' || field === 'plan') {
+      const currentTool = field === 'tool' ? value : updated[index].tool;
+      const currentPlan = field === 'plan' ? value : updated[index].plan;
+      const calculatedPrice = getPlanPrice(currentTool as AITool, currentPlan as ToolPlan);
+      updated[index].monthlySpend = calculatedPrice;
+    }
+    
+    setSubscriptions(updated);
+  };
+
+  // Manual override for monthly spend
+  const handleManualSpendChange = (index: number, value: number) => {
+    const updated = [...subscriptions];
+    updated[index].monthlySpend = value;
+    setSubscriptions(updated);
+  };
+
+  // Reset to default price for a specific tool
+  const resetToDefaultPrice = (index: number) => {
+    const updated = [...subscriptions];
+    const defaultPrice = getPlanPrice(updated[index].tool, updated[index].plan);
+    updated[index].monthlySpend = defaultPrice;
     setSubscriptions(updated);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate: Check if any monthly spend is 0 but plan isn't free
+    const hasError = subscriptions.some(sub => {
+      const planPrice = getPlanPrice(sub.tool, sub.plan);
+      return sub.monthlySpend === 0 && planPrice > 0;
+    });
+    
+    if (hasError) {
+      alert('Some tools have a $0 spend but are on paid plans. Please verify your monthly spend or update the plan.');
+      return;
+    }
+    
     onSubmit({
       subscriptions,
       teamSize,
@@ -138,7 +200,9 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
     });
   };
 
-  // Don't render until initial load is complete (prevents hydration mismatch)
+  // Calculate total monthly spend for display
+  const totalMonthlySpend = subscriptions.reduce((sum, sub) => sum + sub.monthlySpend, 0);
+
   if (!isLoaded) {
     return <div className="text-center py-8">Loading form...</div>;
   }
@@ -147,7 +211,12 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <Label>AI Tools You Use</Label>
+          <div>
+            <Label>AI Tools You Use</Label>
+            <p className="text-xs text-muted-foreground mt-1">
+              Total monthly spend: <span className="font-bold text-primary">${totalMonthlySpend}</span>
+            </p>
+          </div>
           <Button type="button" variant="outline" size="sm" onClick={addSubscription}>
             <Plus className="h-4 w-4 mr-1" /> Add Tool
           </Button>
@@ -166,7 +235,7 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
                 </button>
               )}
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Tool</Label>
                   <Select
@@ -207,14 +276,28 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
                 
                 <div>
                   <Label>Monthly Spend ($)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    placeholder="e.g., 20"
-                    value={sub.monthlySpend || ''}
-                    onChange={(e) => updateSubscription(idx, 'monthlySpend', parseInt(e.target.value) || 0)}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">Total monthly cost for this tool</p>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={0}
+                      step={5}
+                      placeholder="Auto-calculated"
+                      value={sub.monthlySpend || ''}
+                      onChange={(e) => handleManualSpendChange(idx, parseInt(e.target.value) || 0)}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => resetToDefaultPrice(idx)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+                      title="Reset to plan default price"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Default: ${getPlanPrice(sub.tool, sub.plan)}/month
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -231,7 +314,9 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
             value={teamSize}
             onChange={(e) => setTeamSize(parseInt(e.target.value) || 1)}
           />
-          <p className="text-xs text-muted-foreground mt-1">Total number of employees at your company</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Total employees at your company
+          </p>
         </div>
         
         <div>
@@ -241,14 +326,16 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="coding">Coding / Development</SelectItem>
-              <SelectItem value="writing">Writing / Content</SelectItem>
-              <SelectItem value="data">Data Analysis</SelectItem>
-              <SelectItem value="research">Research</SelectItem>
-              <SelectItem value="mixed">Mixed / General</SelectItem>
+              <SelectItem value="coding">💻 Coding / Development</SelectItem>
+              <SelectItem value="writing">✍️ Writing / Content</SelectItem>
+              <SelectItem value="data">📊 Data Analysis</SelectItem>
+              <SelectItem value="research">🔬 Research</SelectItem>
+              <SelectItem value="mixed">🎯 Mixed / General</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground mt-1">How your team primarily uses AI tools</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            How your team primarily uses AI tools
+          </p>
         </div>
       </div>
       
