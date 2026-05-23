@@ -280,7 +280,7 @@ export function ToolForm({ onSubmit, initialData }: ToolFormProps) {
                     <Input
                       type="number"
                       min={0}
-                      step={5}
+                      step={1}
                       placeholder="Auto-calculated"
                       value={sub.monthlySpend || ''}
                       onChange={(e) => handleManualSpendChange(idx, parseInt(e.target.value) || 0)}
