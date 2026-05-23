@@ -22,6 +22,8 @@ export function AuditResults({ result }: AuditResultsProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [aiSummary, setAiSummary] = useState<string>('');
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
+  const [shareId, setShareId] = useState<string>('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const { recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings, isOptimal } = result;
 
@@ -44,22 +46,89 @@ export function AuditResults({ result }: AuditResultsProps) {
 
   const scoreConfig = getScoreConfig();
 
-  // Generate AI summary on mount
+  // Save audit to Supabase backend
+  useEffect(() => {
+    const saveAuditToBackend = async () => {
+      if (isSaving) return;
+      setIsSaving(true);
+      
+      try {
+        // Get user input from localStorage
+        const savedForm = localStorage.getItem('ai-audit-form');
+        let userInput = {};
+        
+        if (savedForm) {
+          userInput = JSON.parse(savedForm);
+        }
+        
+        const response = await fetch('/api/save-audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userInput: userInput,
+            auditResult: {
+              recommendations: recommendations,
+              totalMonthlySavings: totalMonthlySavings,
+              totalAnnualSavings: totalAnnualSavings,
+              isHighSavings: isHighSavings,
+              isOptimal: isOptimal,
+            },
+            totalSavings: totalMonthlySavings
+          })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          console.log('✅ Audit saved! Share ID:', data.shareId);
+          setShareId(data.shareId);
+          localStorage.setItem('lastAuditShareId', data.shareId);
+          localStorage.setItem('lastAuditId', data.auditId);
+        }
+      } catch (error) {
+        console.error('Failed to save audit:', error);
+      } finally {
+        setIsSaving(false);
+      }
+    };
+    
+    saveAuditToBackend();
+  }, [recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings, isOptimal]);
+
+  // Generate AI summary from API
   useEffect(() => {
     const generateSummary = async () => {
       setIsLoadingSummary(true);
       
-      const fallbackSummary = `Based on your AI tool usage, we found ${recommendations.length} way(s) to optimize your spending. ${totalMonthlySavings > 0 ? `You could save $${totalMonthlySavings}/month by following our recommendations below.` : 'Your spending looks optimized!'} ${isHighSavings ? 'Contact Credex to capture these savings through discounted AI credits.' : ''}`;
-      
-      setAiSummary(fallbackSummary);
-      setIsLoadingSummary(false);
+      try {
+        const response = await fetch('/api/summary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recommendations: recommendations,
+            totalMonthlySavings: totalMonthlySavings,
+            totalAnnualSavings: totalAnnualSavings,
+            primaryUseCase: 'coding', // You can get this from props if needed
+          })
+        });
+        
+        const data = await response.json();
+        setAiSummary(data.summary);
+      } catch (error) {
+        console.error('Failed to generate AI summary:', error);
+        // Fallback summary
+        const fallbackSummary = `Based on your AI tool usage, we found ${recommendations.length} way(s) to optimize your spending. ${totalMonthlySavings > 0 ? `You could save $${totalMonthlySavings}/month by following our recommendations below.` : 'Your spending looks optimized!'} ${isHighSavings ? 'Contact Credex to capture these savings through discounted AI credits.' : ''}`;
+        setAiSummary(fallbackSummary);
+      } finally {
+        setIsLoadingSummary(false);
+      }
     };
     
     generateSummary();
-  }, [recommendations, totalMonthlySavings, isHighSavings]);
+  }, [recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    const shareableUrl = `${window.location.origin}/share/${shareId}`;
+    navigator.clipboard.writeText(shareableUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -68,27 +137,55 @@ export function AuditResults({ result }: AuditResultsProps) {
     e.preventDefault();
     setIsSubmitting(true);
     
-    const leadData = {
-      email,
-      companyName,
-      role,
-      auditResult: {
-        totalMonthlySavings,
-        totalAnnualSavings,
-        recommendations: recommendations.length,
-        isHighSavings,
-      },
-      createdAt: new Date().toISOString(),
-    };
+    const auditId = localStorage.getItem('lastAuditId');
     
-    localStorage.setItem(`lead-${email}`, JSON.stringify(leadData));
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setEmail('');
-    setCompanyName('');
-    setRole('');
+    try {
+      const response = await fetch('/api/capture-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          companyName,
+          role,
+          auditId: auditId,
+          totalSavings: totalMonthlySavings,
+          isHighSavings: isHighSavings,
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log('✅ Lead captured:', data.leadId);
+        
+        // Also save to localStorage as backup
+        const leadData = {
+          email,
+          companyName,
+          role,
+          auditResult: {
+            totalMonthlySavings,
+            totalAnnualSavings,
+            recommendations: recommendations.length,
+            isHighSavings,
+          },
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem(`lead-${email}`, JSON.stringify(leadData));
+        
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+        setEmail('');
+        setCompanyName('');
+        setRole('');
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Failed to save lead:', error);
+      alert('Failed to save. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -283,10 +380,10 @@ export function AuditResults({ result }: AuditResultsProps) {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send My Report →'}
+                {isSubmitting ? 'Saving...' : 'Save My Report →'}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
-                We'll email you your full audit report. No spam, unsubscribe anytime.
+                We'll save your audit and send you a copy. No spam, unsubscribe anytime.
               </p>
             </form>
           </CardContent>
@@ -295,9 +392,9 @@ export function AuditResults({ result }: AuditResultsProps) {
         <Card className="border-green-500 bg-green-50 dark:bg-green-950/20">
           <CardContent className="pt-6 text-center">
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-            <CardTitle className="text-lg">Report Sent!</CardTitle>
+            <CardTitle className="text-lg">Report Saved!</CardTitle>
             <p className="text-muted-foreground mt-2">
-              Check your inbox for your full audit report.
+              Your audit has been saved. Check your email for a copy.
             </p>
           </CardContent>
         </Card>
@@ -311,16 +408,21 @@ export function AuditResults({ result }: AuditResultsProps) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button variant="outline" onClick={handleCopyLink} className="gap-2">
+            <Button variant="outline" onClick={handleCopyLink} className="gap-2" disabled={!shareId}>
               <Copy className="h-4 w-4" />
-              {copied ? 'Copied!' : 'Copy Link'}
+              {copied ? 'Copied!' : shareId ? 'Copy Shareable Link' : 'Generating link...'}
             </Button>
             <Button variant="outline" className="gap-2">
               <Share2 className="h-4 w-4" />
               Share
             </Button>
           </div>
-          <p className="text-xs text-center text-muted-foreground mt-4">
+          {shareId && (
+            <p className="text-xs text-center text-muted-foreground mt-3">
+              Share link: {typeof window !== 'undefined' ? `${window.location.origin}/share/${shareId}` : ''}
+            </p>
+          )}
+          <p className="text-xs text-center text-muted-foreground mt-2">
             Your personal information is not included in shared links
           </p>
         </CardContent>

@@ -65,3 +65,37 @@
 - Create shareable unique URLs with Open Graph tags
 - Send transactional emails via Resend
 - Write GTM.md and ECONOMICS.md
+
+
+## Day 3 — 2026-05-23
+
+**Hours worked:** 7
+
+**What I did:**
+- Set up Supabase project with PostgreSQL database
+- Created audits and leads tables with proper schema
+- Built API routes: save-audit, capture-lead, summary
+- Integrated Supabase with Next.js frontend
+- Added real-time audit saving to database
+- Implemented AI-powered summary with fallback
+- Created shareable URL system with dynamic routing
+- Built full UI/UX share page matching main app design
+- Tested complete flow: form → save → share → view
+
+**What I learned:**
+- Next.js 15 requires async params with Promise unwrapping
+- Supabase is incredibly fast for MVP backend
+- Having fallbacks for API failures is critical for production
+- Shareable URLs create natural viral growth loops
+- Environment variables need to be set both locally and on Vercel
+
+**Blockers:**
+- Next.js 15 async params took time to figure out
+- Fixed with `const { id } = await params`
+
+**Plan for tomorrow:**
+- Write GTM.md (go-to-market strategy)
+- Write ECONOMICS.md (unit economics)
+- Conduct 3 real user interviews
+- Write USER_INTERVIEWS.md with quotes
+- Add PDF export (bonus)
