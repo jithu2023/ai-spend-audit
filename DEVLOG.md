@@ -99,3 +99,38 @@
 - Conduct 3 real user interviews
 - Write USER_INTERVIEWS.md with quotes
 - Add PDF export (bonus)
+
+
+
+## Day 4 — 2026-05-24
+
+**Hours worked:** 4
+
+**What I did:**
+- Conducted 3 real user interviews with founders/engineers
+- Documented quotes, insights, and design changes in USER_INTERVIEWS.md
+- Wrote comprehensive GTM.md with channel strategy and launch plan
+- Built unit economics model in ECONOMICS.md with LTV/CAC calculations
+- Analyzed path to $1M ARR for Credex
+
+**What I learned:**
+- Founders don't track per-seat usage → added seat utilization detector
+- Enterprises need role-based access → added to Week 2 roadmap
+- Viral growth comes from benchmarks → added company size comparison
+- Unit economics of free tool are compelling ($0 CAC, 99% margin)
+- Real user quotes are more powerful than any feature
+
+**Key insights from interviews:**
+- Abdulla (Onesol AI Labs): "Paying for 4 ChatGPT Team seats but only 2 active users"
+- Musthafa (Thoughtworks): "Zombie subscriptions billing for months after people leave"
+- Arun (Kalvium, ex-Google): "Shareable results page is how you get viral growth"
+
+**What I'd change:**
+- Should have added seat utilization detection earlier (critical feature)
+- Need monthly email re-audits (requested by 2/3 interviewees)
+
+**Plan for Day 5:**
+- Add PDF export (bonus feature)
+- Implement rate limiting for abuse protection
+- Polish Open Graph tags for better social sharing
+- Write LANDING_COPY.md if not done
