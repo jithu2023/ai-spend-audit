@@ -31,11 +31,11 @@ graph TB
         D[Audit Engine]
         E[Lead Capture]
         F[Share Generator]
+        I[Summary Generator]
     end
     
     subgraph External
         G[Supabase DB]
-        H[LLM Service]
     end
     
     A -->|Form Data| C
@@ -43,10 +43,10 @@ graph TB
     C -->|Process| D
     C -->|Store Lead| E
     C -->|Generate Link| F
+    C -->|Generate Summary| I
     E -->|Insert| G
     F -->|Query| G
-    C -->|AI Summary| H
-    H -->|Fallback| C
+    I -->|Returns Summary| C
 ```
 
 ## Data Flow: User Audit
