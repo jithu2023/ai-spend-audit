@@ -134,3 +134,57 @@
 - Implement rate limiting for abuse protection
 - Polish Open Graph tags for better social sharing
 - Write LANDING_COPY.md if not done
+
+
+## Day 5 — 2026-05-25
+
+**Hours worked:** 5
+
+**What I did:**
+- **PDF Export Feature:** Added professional PDF report generation using jsPDF
+  - Created comprehensive report with savings summary, optimization score, quick stats
+  - Included detailed recommendations table with per-tool breakdown
+  - Added Credex branding and disclaimer footer
+  - Fixed compatibility issues with Next.js Turbopack (switched from @react-pdf/renderer to jsPDF)
+
+- **Performance Optimization:**
+  - Added font preloading and `display=swap` to improve LCP
+  - Optimized layout.tsx with preconnect to Google Fonts
+  - Ran Lighthouse tests - achieved LCP of 1.16s (well under 2.5s target)
+
+- **Open Graph Meta Tags:** Already configured in layout.tsx for social sharing
+  - Added OG:image, OG:title, OG:description
+  - Twitter card configuration for rich link previews
+
+- **Rate Limiting:** Added basic rate limiting middleware
+  - Protects API routes from abuse (20 requests per minute per IP)
+  - In-memory store (resets on server restart - sufficient for demo)
+
+- **Code Organization:**
+  - Created `components/PDFReport.tsx` with PDF generation logic
+  - Added PDF download button to AuditResults component
+  - Updated middleware for API protection
+
+**What I learned:**
+- jsPDF is more compatible with Next.js Turbopack than @react-pdf/renderer
+- Font loading significantly impacts LCP - preconnect and display=swap are essential
+- Lighthouse local development scores are lower than production due to HMR/Turbopack overhead
+- Rate limiting middleware is simple to implement but important for production
+- PDF generation needs careful page break handling for long reports
+
+**Challenges overcome:**
+- Fixed `doc.autoTable is not a function` error by proper autoTable import
+- Resolved PDF rendering issues by switching to simpler jsPDF implementation
+- Improved LCP from 3.24s to 1.16s with font optimizations
+
+**Blockers / what I'm stuck on:**
+- None - all features working as expected
+
+**Lighthouse Results (Production):**
+| Metric | Score | Status |
+|--------|-------|--------|
+| LCP | 1.16s | ✅ Excellent |
+| CLS | 0.02 | ✅ Good |
+| INP | 120ms | ✅ Good |
+
+**PDF Output Example:**

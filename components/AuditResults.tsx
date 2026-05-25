@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuditResult } from '@/types';
-import { TrendingDown, CheckCircle, Copy, Share2, Mail, Sparkles } from 'lucide-react';
+import { TrendingDown, CheckCircle, Copy, Share2, Mail, Sparkles, FileText } from 'lucide-react';
+import { PDFDownloadButton } from './PDFReport';
 
 interface AuditResultsProps {
   result: AuditResult;
@@ -24,8 +25,17 @@ export function AuditResults({ result }: AuditResultsProps) {
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [shareId, setShareId] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
+  const [userInputForPDF, setUserInputForPDF] = useState<any>(null);
 
   const { recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings, isOptimal } = result;
+
+  // Load user input for PDF
+  useEffect(() => {
+    const savedForm = localStorage.getItem('ai-audit-form');
+    if (savedForm) {
+      setUserInputForPDF(JSON.parse(savedForm));
+    }
+  }, []);
 
   // Calculate total current spend and optimization score
   const totalCurrentSpend = recommendations.reduce((sum, rec) => sum + rec.currentSpend, 0) || 1;
@@ -53,7 +63,6 @@ export function AuditResults({ result }: AuditResultsProps) {
       setIsSaving(true);
       
       try {
-        // Get user input from localStorage
         const savedForm = localStorage.getItem('ai-audit-form');
         let userInput = {};
         
@@ -107,7 +116,7 @@ export function AuditResults({ result }: AuditResultsProps) {
             recommendations: recommendations,
             totalMonthlySavings: totalMonthlySavings,
             totalAnnualSavings: totalAnnualSavings,
-            primaryUseCase: 'coding', // You can get this from props if needed
+            primaryUseCase: userInputForPDF?.primaryUseCase || 'coding',
           })
         });
         
@@ -115,7 +124,6 @@ export function AuditResults({ result }: AuditResultsProps) {
         setAiSummary(data.summary);
       } catch (error) {
         console.error('Failed to generate AI summary:', error);
-        // Fallback summary
         const fallbackSummary = `Based on your AI tool usage, we found ${recommendations.length} way(s) to optimize your spending. ${totalMonthlySavings > 0 ? `You could save $${totalMonthlySavings}/month by following our recommendations below.` : 'Your spending looks optimized!'} ${isHighSavings ? 'Contact Credex to capture these savings through discounted AI credits.' : ''}`;
         setAiSummary(fallbackSummary);
       } finally {
@@ -124,7 +132,7 @@ export function AuditResults({ result }: AuditResultsProps) {
     };
     
     generateSummary();
-  }, [recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings]);
+  }, [recommendations, totalMonthlySavings, totalAnnualSavings, isHighSavings, userInputForPDF]);
 
   const handleCopyLink = () => {
     const shareableUrl = `${window.location.origin}/share/${shareId}`;
@@ -158,7 +166,6 @@ export function AuditResults({ result }: AuditResultsProps) {
       if (response.ok) {
         console.log('✅ Lead captured:', data.leadId);
         
-        // Also save to localStorage as backup
         const leadData = {
           email,
           companyName,
@@ -399,6 +406,37 @@ export function AuditResults({ result }: AuditResultsProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* PDF Export Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-red-600" />
+            <CardTitle>Download Report</CardTitle>
+          </div>
+          <CardDescription>
+            Get a professional PDF report of your audit
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PDFDownloadButton
+            result={{
+              totalMonthlySavings,
+              totalAnnualSavings,
+              recommendations,
+              isHighSavings,
+              isOptimal,
+            }}
+            userInput={{
+              teamSize: userInputForPDF?.teamSize || 1,
+              primaryUseCase: userInputForPDF?.primaryUseCase || 'coding',
+            }}
+          />
+          <p className="text-xs text-muted-foreground text-center mt-3">
+            Professional report with all recommendations and savings calculations
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Share Section */}
       <Card>
