@@ -188,10 +188,9 @@
 | INP | 120ms | ✅ Good |
 
 **PDF Output Example:**
-
 ## Day 6 — 2026-05-26
 
-**Hours worked:** 4
+**Hours worked:** 5
 
 **What I did:**
 - Mobile responsive testing on iPhone 14 Pro Max, iPad Pro, Samsung Galaxy
@@ -203,6 +202,10 @@
 - Fixed CLS by adding min-height containers to prevent layout shifts
 - Added mounted state to prevent hydration mismatch
 - Verified all 12 required files are present
+- **Added real email functionality with Resend API**
+- Created professional HTML email template with savings summary and shareable link
+- Tested email delivery - successfully received confirmation email
+- Added email screenshot to README for documentation
 
 **Lighthouse Results:**
 | Metric | Score | Status |
@@ -217,12 +220,29 @@
 - `screenshot-3-mobile.png` - Mobile responsive view
 - `screenshot-4-pdf.png` - PDF report export
 - `screenshot-5-share.png` - Shared link incognito view
+- `screenshot-6-email.png` - Email confirmation received
+
+**Email Implementation:**
+- Set up Resend API (free tier - 3000 emails/month)
+- Created professional HTML email template with:
+  - Savings summary (monthly + annual)
+  - Personalized shareable report link
+  - Clear next steps for users
+  - Credex branding and footer
+- Integrated email sending with lead capture flow
+- Added error handling (email fails don't break lead capture)
 
 **What I learned:**
 - GitHub requires forward slashes `/` for images, not backslashes `\`
 - Mobile touch targets need to be 44x44px minimum
 - Adding min-height containers significantly improves CLS scores
 - Hydration mismatch can be prevented with mounted state
+- Resend API is simple to integrate and has generous free tier
+- HTML email templates need inline styles for maximum compatibility
+
+**Challenges overcome:**
+- Email deliverability - Resend handles this automatically
+- Template design - created responsive HTML that works across email clients
 
 **Plan for tomorrow (Day 7):**
 - Final review of all deliverables
@@ -236,3 +256,5 @@
 ✅ README updated - Complete
 ✅ Lighthouse tested - Complete
 ✅ CLS fix applied - Complete
+✅ Email functionality - Complete
+✅ Email screenshot added - Complete

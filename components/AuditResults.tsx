@@ -141,59 +141,86 @@ export function AuditResults({ result }: AuditResultsProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+const handleEmailSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  
+  const auditId = localStorage.getItem('lastAuditId');
+  const shareId = localStorage.getItem('lastAuditShareId');
+  
+  try {
+    // Step 1: Save to Supabase
+    const response = await fetch('/api/capture-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        companyName,
+        role,
+        auditId: auditId,
+        totalSavings: totalMonthlySavings,
+        isHighSavings: isHighSavings,
+      })
+    });
     
-    const auditId = localStorage.getItem('lastAuditId');
+    const data = await response.json();
     
-    try {
-      const response = await fetch('/api/capture-lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          companyName,
-          role,
-          auditId: auditId,
-          totalSavings: totalMonthlySavings,
-          isHighSavings: isHighSavings,
-        })
-      });
+    if (response.ok) {
+      console.log('✅ Lead captured:', data.leadId);
       
-      const data = await response.json();
-      
-      if (response.ok) {
-        console.log('✅ Lead captured:', data.leadId);
+      // Step 2: Send confirmation email
+      try {
+        const emailResponse = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            companyName,
+            totalSavings: totalMonthlySavings,
+            shareId: shareId,
+            userName: role || 'Valued Customer',
+          })
+        });
         
-        const leadData = {
-          email,
-          companyName,
-          role,
-          auditResult: {
-            totalMonthlySavings,
-            totalAnnualSavings,
-            recommendations: recommendations.length,
-            isHighSavings,
-          },
-          createdAt: new Date().toISOString(),
-        };
-        localStorage.setItem(`lead-${email}`, JSON.stringify(leadData));
-        
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-        setEmail('');
-        setCompanyName('');
-        setRole('');
-      } else {
-        throw new Error(data.error);
+        if (emailResponse.ok) {
+          console.log('✅ Confirmation email sent to:', email);
+        } else {
+          console.warn('⚠️ Email sent but confirmation may be delayed');
+        }
+      } catch (emailError) {
+        console.warn('Email sending issue:', emailError);
+        // Don't fail the whole flow - lead is already saved
       }
-    } catch (error) {
-      console.error('Failed to save lead:', error);
-      alert('Failed to save. Please try again.');
+      
+      // Save to localStorage as backup
+      const leadData = {
+        email,
+        companyName,
+        role,
+        auditResult: {
+          totalMonthlySavings,
+          totalAnnualSavings,
+          recommendations: recommendations.length,
+          isHighSavings,
+        },
+        createdAt: new Date().toISOString(),
+      };
+      localStorage.setItem(`lead-${email}`, JSON.stringify(leadData));
+      
       setIsSubmitting(false);
+      setIsSubmitted(true);
+      setEmail('');
+      setCompanyName('');
+      setRole('');
+    } else {
+      throw new Error(data.error);
     }
-  };
+  } catch (error) {
+    console.error('Failed to save lead:', error);
+    alert('Failed to save. Please try again.');
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="space-y-6">

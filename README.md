@@ -55,6 +55,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 |------------|-------------------------|
 | <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-4-pdf.png" width="400"> | <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-5-share.png" width="400"> |
 
+### Email Confirmation
+
+<img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-6-email.png" width="500">
+
+*Users receive a professional email with savings summary and shareable report link*
+
 ## Live Demo
 
 🔗 **Live URL:** [https://ai-spend-audit-hazel-seven.vercel.app](https://ai-spend-audit-hazel-seven.vercel.app)
