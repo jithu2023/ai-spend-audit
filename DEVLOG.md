@@ -188,3 +188,51 @@
 | INP | 120ms | ✅ Good |
 
 **PDF Output Example:**
+
+## Day 6 — 2026-05-26
+
+**Hours worked:** 4
+
+**What I did:**
+- Mobile responsive testing on iPhone 14 Pro Max, iPad Pro, Samsung Galaxy
+- Cross-browser testing on Chrome, Firefox, Edge
+- Added 5 screenshots to public folder for README
+- Updated README.md with screenshots and features list
+- Fixed screenshot paths for GitHub compatibility (forward slashes)
+- Ran Lighthouse tests - LCP 1.86s (Excellent), CLS 0.13 (Needs slight improvement)
+- Fixed CLS by adding min-height containers to prevent layout shifts
+- Added mounted state to prevent hydration mismatch
+- Verified all 12 required files are present
+
+**Lighthouse Results:**
+| Metric | Score | Status |
+|--------|-------|--------|
+| LCP | 1.86s | ✅ Excellent (<2.5s) |
+| CLS | 0.13 | ⚠️ Slightly above 0.1 (fixed with min-height) |
+| INP | 88ms | ✅ Excellent (<200ms) |
+
+**Screenshots Added:**
+- `screenshot-1-form.png` - Desktop form page
+- `screenshot-2-results.png` - Audit results page  
+- `screenshot-3-mobile.png` - Mobile responsive view
+- `screenshot-4-pdf.png` - PDF report export
+- `screenshot-5-share.png` - Shared link incognito view
+
+**What I learned:**
+- GitHub requires forward slashes `/` for images, not backslashes `\`
+- Mobile touch targets need to be 44x44px minimum
+- Adding min-height containers significantly improves CLS scores
+- Hydration mismatch can be prevented with mounted state
+
+**Plan for tomorrow (Day 7):**
+- Final review of all deliverables
+- Create submission package
+- Submit to Credex
+
+**Day 6 Summary:**
+✅ Mobile responsive - Complete
+✅ Cross-browser testing - Complete
+✅ Screenshots added - Complete
+✅ README updated - Complete
+✅ Lighthouse tested - Complete
+✅ CLS fix applied - Complete

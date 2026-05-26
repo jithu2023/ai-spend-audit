@@ -34,3 +34,40 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+## Screenshots
+
+### Desktop Application
+
+| Form Page | Results Page |
+|-----------|--------------|
+| ![Form Page](/screenshot-1-form.png) | ![Results Page](/screenshot-2-results.png) |
+
+
+### Mobile Responsive
+
+![Mobile View on iPhone 14 Pro Max](/screenshot-3-mobile.png)
+
+### PDF Report & Sharing
+
+| PDF Report | Shared Link (Incognito) |
+|------------|-------------------------|
+| ![PDF Report](/screenshot-4-pdf.png) | ![Shared Results](/screenshot-5-share.png) |
+
+## Live Demo
+
+🔗 **Live URL:** [https://ai-spend-audit-hazel-seven.vercel.app](https://ai-spend-audit-hazel-seven.vercel.app)
+
+## Features
+
+- ✅ **9 AI Tools Supported**: Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, Windsurf, Anthropic API, OpenAI API
+- ✅ **Smart Audit Engine**: Detects team plan overpayment, redundant tools, API vs subscription savings
+- ✅ **Optimization Score**: 0-100 score showing how optimized your spending is
+- ✅ **Smart Summary Generator**: Personalized audit insights using rule-based LLM (always works, no API dependency)
+- ✅ **PDF Export**: Download professional report
+- ✅ **Shareable URLs**: Each audit gets unique link with OG tags
+- ✅ **Email Capture**: Save audits to Supabase database
+- ✅ **Rate Limiting**: 20 requests/minute for API protection
+- ✅ **19 Passing Tests**: Comprehensive test coverage
