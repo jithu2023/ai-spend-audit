@@ -450,10 +450,10 @@ export function AuditResults({ result }: AuditResultsProps) {
               <Copy className="h-4 w-4" />
               {copied ? 'Copied!' : shareId ? 'Copy Shareable Link' : 'Generating link...'}
             </Button>
-            <Button variant="outline" className="gap-2">
+            {/* <Button variant="outline" className="gap-2">
               <Share2 className="h-4 w-4" />
               Share
-            </Button>
+            </Button> */}
           </div>
           {shareId && (
             <p className="text-xs text-center text-muted-foreground mt-3">
