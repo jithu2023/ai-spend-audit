@@ -43,18 +43,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 | Form Page | Results Page |
 |-----------|--------------|
-| ![Form Page](/screenshot-1-form.png) | ![Results Page](/screenshot-2-results.png) |
-
+| <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-1-form.png" width="400"> | <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-2-results.png" width="400"> |
 
 ### Mobile Responsive
 
-![Mobile View on iPhone 14 Pro Max](/screenshot-3-mobile.png)
+<img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-3-mobile.png" width="300">
 
 ### PDF Report & Sharing
 
 | PDF Report | Shared Link (Incognito) |
 |------------|-------------------------|
-| ![PDF Report](/screenshot-4-pdf.png) | ![Shared Results](/screenshot-5-share.png) |
+| <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-4-pdf.png" width="400"> | <img src="https://raw.githubusercontent.com/jithu2023/ai-spend-audit/main/public/screenshot-5-share.png" width="400"> |
 
 ## Live Demo
 
