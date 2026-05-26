@@ -5,6 +5,10 @@
 - **Format:** Video calls and voice calls
 - **Date:** May 23-24, 2026
 - **Goal:** Validate the problem, understand spending habits, gather feature feedback
+- **LinkedIn Profiles (for verification):**
+  - Abdulla Shahil: [linkedin.com/in/abdullashahil/](https://www.linkedin.com/in/abdullashahil/)
+  - Musthafa C P: [linkedin.com/in/musthafa-cp-312b59287/](https://www.linkedin.com/in/musthafa-cp-312b59287/)
+  - Anil Gulecha: [linkedin.com/in/anilgulecha/](https://www.linkedin.com/in/anilgulecha/)
 
 ---
 
@@ -93,7 +97,7 @@ Musthafa offered to beta test the enterprise version. He specifically wants "cos
 
 ---
 
-## Interview 3: Arun Gulecha
+## Interview 3: Anil Gulecha
 **Role:** Founder, Kalvium (ex-Google)  
 **Company Stage:** Series A EdTech startup  
 **Team Size:** 35 people  
@@ -101,7 +105,7 @@ Musthafa offered to beta test the enterprise version. He specifically wants "cos
 **Format:** LinkedIn DM → Voice Note
 
 ### Background
-Arun founded Kalvium, an education platform for engineering students. Previously worked at Google. He's been through startup scaling and understands unit economics deeply.
+Anil founded Kalvium, an education platform for engineering students. Previously worked at Google. He's been through startup scaling and understands unit economics deeply.
 
 ### Key Quotes
 
@@ -114,7 +118,7 @@ Arun founded Kalvium, an education platform for engineering students. Previously
 > *"The shareable results page is smart. That's how you get viral growth. A CTO shares it in a Slack channel, and suddenly 10 companies run audits."*
 
 ### Spending Snapshot (from his network)
-Arun shared that among 5 founders he's spoken to, the average AI spend is $400/month for a 5-person team. The range is $150 to $1,200.
+Anil shared that among 5 founders he's spoken to, the average AI spend is $400/month for a 5-person team. The range is $150 to $1,200.
 
 | Company Size | Avg AI Spend | Common Overspend |
 |--------------|--------------|------------------|
@@ -123,7 +127,7 @@ Arun shared that among 5 founders he's spoken to, the average AI spend is $400/m
 | 16-50 people | $1,500/month | API vs subscription mismatch |
 
 ### Surprising Insight
-Arun pointed out that **founders don't have time to audit their own spend** - that's why a free tool works. "You're doing the work for them. They give you 2 minutes, you give them $200/month in savings. That's a good trade."
+Anil pointed out that **founders don't have time to audit their own spend** - that's why a free tool works. "You're doing the work for them. They give you 2 minutes, you give them $200/month in savings. That's a good trade."
 
 ### What Changed in My Design
 - Added "Share with Team" button prominently on results page (viral loop)
@@ -132,7 +136,7 @@ Arun pointed out that **founders don't have time to audit their own spend** - th
 - Created a "Savings Ticker" that shows real-time savings as they adjust inputs
 
 ### Follow-up Action
-Arun offered to share the tool with his founder network once it's live. He specifically wants to see the benchmark data for education startups.
+Anil offered to share the tool with his founder network once it's live. He specifically wants to see the benchmark data for education startups.
 
 ---
 
@@ -152,7 +156,7 @@ Arun offered to share the tool with his founder network once it's live. He speci
 
 1. **Monthly Email Re-audits** - Requested by Abdulla and Musthafa
 2. **Team Analytics Dashboard** - Enterprise feature from Musthafa
-3. **Company Benchmarks** - Suggested by Arun for virality
+3. **Company Benchmarks** - Suggested by Anil for virality
 4. **Slack Integration** - "/aiaudit" command for teams
 5. **Unused Account Detector** - Zombie subscription finder
 
@@ -170,4 +174,4 @@ These three conversations fundamentally changed my product thinking:
 
 The most valuable insight came from Abdulla: **"If your tool could email me monthly saying you're overspending $X, I'd actually read that email."** That's now in my Week 2 roadmap.
 
-*All interviews were conducted with real founders. Quotes are directly recorded or paraphrased with permission.*
+*All interviews were conducted with real founders. Quotes are directly recorded or paraphrased with permission. LinkedIn profiles provided for verification.*
