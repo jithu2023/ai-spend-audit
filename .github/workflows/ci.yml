@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,10 +20,16 @@ jobs:
         cache: 'npm'
     
     - name: Install dependencies
-      run: npm ci
+      run: npm ci --legacy-peer-deps
     
-    - name: Run linter (optional)
-      run: npm run lint || true
+    - name: Create .env file for tests
+      run: |
+        echo "NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co" >> .env.test
+        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder" >> .env.test
     
     - name: Run tests
-      run: npm test
+      run: npm test -- --run
+      env:
+        NODE_ENV: test
+        NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
